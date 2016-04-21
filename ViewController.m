@@ -19,7 +19,7 @@
     [super viewDidLoad];
     WaterVolume* w = [[WaterVolume alloc] init];
     //int height_example = {{5, 5, 5, 5}, {5, 1, 5, 5},{5, 5, 5, 5}};
-    NSArray* level0 = [NSArray arrayWithObjects:@(5), @(5), @(5), @(5), @(5), nil];
+    NSArray* level0 = @[@(5), @(5), @(5), @(5), @(5)];
     NSArray* level1 = [NSArray arrayWithObjects:@(5), @(1), @(5), @(3), @(5),nil];
     NSArray* level2 = [NSArray arrayWithObjects:@(5), @(2), @(5), @(2), @(5),nil];
     NSArray* level3 = [NSArray arrayWithObjects:@(5), @(5), @(5), @(5), @(5),nil];

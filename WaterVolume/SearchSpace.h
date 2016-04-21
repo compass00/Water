@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface SearchSpace : NSObject
-@property (nonatomic, strong, readonly) NSMutableArray* map;
-@property (nonatomic, strong, readonly) NSMutableArray* direction;
-@property (nonatomic, strong, readonly) NSMutableArray* visit;
+@property (nonatomic, strong, readonly) NSArray* map;
+
+- (id)initWithMap:(NSArray*)m withWidth:(int)width withDepth:(int)depth;
+- (void)deepFirstSearchStart:(int)start_x starty:(int)start_y endx:(int)end_x endy:(int)end_y;
+
 @end

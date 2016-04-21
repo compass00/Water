@@ -9,7 +9,7 @@
 #import "WaterVolume.h"
 #import "Room.h"
 #import "Wall.h"
-#import "DeepSearch.h"
+#import "SearchSpace.h"
 @interface WaterVolume()
 @property (nonatomic, strong) NSArray* mapHeightArray;
 @property (nonatomic) int mapWidth;
@@ -27,18 +27,12 @@
     _mapDepth = depth;
     
     
-   /* for (int i = 0; i <_mapDepth; i++) {
-        for (int j = 0; j < _mapWidth; j++) {
-            [_dirArray addObject:@(0)];
-            [_visitArray addObject:@(0)];
-            
-        }
-    }*/
-    DFS(1, 1, 2, 1);
+  
     // 2. search all walls
-    NSMutableArray* walls = [self searchAllWalls];
-    
+    //NSMutableArray* walls = [self searchAllWalls];
+    SearchSpace* search = [[SearchSpace alloc] initWithMap:height withWidth:width withDepth:depth];
     // 3. search the close space
+    [search deepFirstSearchStart:0 starty:0 endx:1 endy:0];
     
     
     // 4. build room
@@ -73,24 +67,6 @@
     return rooms;
 }
 
-- (NSMutableArray*)searchAllWalls {
-    NSMutableArray* walls = [[NSMutableArray alloc] init];
-    for (int i = 0; i < _mapHeightArray.count; i++) {
-        NSArray* heightrow = [_mapHeightArray objectAtIndex:i];
-        if (heightrow.count > 0) {
-            for (int j = 0; j < heightrow.count; j++) {
-                if ([self isWall:i withY:j]) {
-                    int height = [[heightrow objectAtIndex:j] intValue];
-                    Wall* w = [[Wall alloc] initWith:height withX:i withY:j];
-                   // NSLog (@"x=%d, y=%d, height=%d", i, j, height);
-                    [walls addObject:w];
-                }
-            }
-        }
-    }
-    return walls;
-}
-
 - (BOOL)deepSearchRoomfrom:(int)posx withY:(int)posy toRoom:(Room*)room{
     if (_mapHeightArray == nil) {
         return NO;
@@ -105,60 +81,5 @@
     }*/
     
     return YES;
-
-}
-
-- (BOOL)isWall:(int)posx withY:(int)posy {
-    if (_mapHeightArray == nil || posx >= _mapHeightArray.count) {
-        return NO;
-    }
-    
-    NSArray* heightRow = [_mapHeightArray objectAtIndex:posx];
-    if (posy > heightRow.count) {
-        return NO;
-    }
-    
-    int height = [[heightRow objectAtIndex:posy] intValue];
-    int left = posy > 0 ? (posy - 1) : -1;
-    
-    int heightOfleft = -1;
-    if (left > 0) {
-        heightOfleft = [[heightRow objectAtIndex:left] intValue];
-    }
-    
-    int right = posy < heightRow.count - 1 ? (posy + 1) : -1;
-    int heightOfRight = -1;
-    if (right > 0) {
-        heightOfRight = [[heightRow objectAtIndex:right] intValue];
-    }
-    
-    int up = posx > 0 ? (posx - 1) : -1;
-    int heightOfUp = -1;
-    if (up > 0) {
-        NSArray* heightRowUp = [_mapHeightArray objectAtIndex:up];
-        heightOfUp = [[heightRowUp objectAtIndex:posy] intValue];
-        
-    }
-    
-    int down = posx < _mapHeightArray.count - 1 ? (posx + 1) : -1;;
-    int heightOfDown = -1;
-    if (down > 0) {
-        NSArray* heightRowDown = [_mapHeightArray objectAtIndex:down];
-        heightOfDown = [[heightRowDown objectAtIndex:posy] intValue];
-    }
-    
-    /*const int* heightArray = _mapHeightArray[posx];
-    int height = &heightArray[posy];
-    if (posx == 0 && posy == 0) {
-        // first pos
-        
-    } else {
-        
-    }*/
-    return ((height >= heightOfleft) && (height >= heightOfRight) && (height >= heightOfUp) && (height >= heightOfDown));
-}
-
-- (BOOL)isNeighbor:(int)fromposx andY:(int)fromposy withX:(int)posx withY:(int)poxy {
-    return (abs(fromposx - posx) == 1 || abs(fromposy - poxy) == 1);
 }
 @end
