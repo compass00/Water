@@ -16,6 +16,7 @@
 @property (nonatomic, strong, readonly) NSMutableArray* stack;
 @property (nonatomic) int stackTop;
 @property (nonatomic) int mapWidth;
+@property (nonatomic) int mapDepth;
 @end
 
 @implementation SearchSpace
@@ -25,23 +26,25 @@
 
 - (id)init {
     self = [super init];
-    _stepx = @[@(-1), @(-1), @(0), @(0)];
-    _stepy = @[@(0), @(0), @(-1), @(-1)];
+    _stepx = @[@(-1), @(1), @(0), @(0)];
+    _stepy = @[@(0), @(0), @(-1), @(1)];
    return self;
 }
 
 - (id)initWithMap:(NSArray*)m withWidth:(int)width withDepth:(int)depth{
     self = [super init];
-    _stepx = @[@(-1), @(-1), @(0), @(0)];
-    _stepy = @[@(0), @(0), @(-1), @(-1)];
-    _map = m;
-    _stack = [[NSMutableArray alloc] initWithCapacity:(width*depth)];
-    _visit = [[NSMutableArray alloc] init];
     _mapWidth = width;
+    _mapDepth = depth;
+    _stepx = @[@(-1), @(1), @(0), @(0)];
+    _stepy = @[@(0), @(0), @(-1), @(1)];
+    _map = m;
+    _stack = [[NSMutableArray alloc] init];
+    _visit = [[NSMutableArray alloc] init];
     for (int i = 0; i < depth; i++) {
         NSMutableArray* rowArray = [[NSMutableArray alloc] init];
         for (int j = 0; j < width; j++) {
             [rowArray addObject:@(0)];
+            [_stack addObject:@(0)];
         }
         [_visit addObject:rowArray];
     }
@@ -58,8 +61,12 @@
         int u = [_stack[--top] intValue];
         int x = u / _mapWidth;
         int y = u % _mapWidth;
-        printf(flag++? "->(%d,%d)":"(%d,%d)",x,y,x,y);
+        //if (top > 0) {
+            printf(flag++? "->(%d,%d)":"(%d,%d)",x,y,x,y);
+        //}
     }
+    printf("-------------------------------------\n");
+
 }
 
 - (void)deepFirstSearchStart:(int)start_x starty:(int)start_y endx:(int)end_x endy:(int)end_y {
@@ -72,12 +79,14 @@
     int _top = _stackTop;
    
     _visit[end_x][end_y] = @(1);//把本结点标志为已经访问。
-    for(int i = 0;i < 4; ++i){
-        int nx = end_x + [_stepx[i] intValue];
-        int ny = end_y + [_stepy[i] intValue];
-        if([self isWall:nx withY:ny] && ![_visit[nx][ny] intValue]){
-            [self deepFirstSearchStart:start_x starty:start_y endx:nx endy:ny];
-            _stackTop = _top;
+    for(int i = 0;i < _stepx.count; ++i){
+        int neighborx = end_x + [_stepx[i] intValue];
+        int neighbory = end_y + [_stepy[i] intValue];
+        if (neighborx < _mapDepth && neighborx > -1 && neighbory < _mapWidth && neighbory > -1) {
+            if(![_visit[neighborx][neighbory] intValue] && [self isWall:neighborx withY:neighbory]){
+                [self deepFirstSearchStart:start_x starty:start_y endx:neighborx endy:neighbory];
+                _stackTop = _top;
+            }
         }
     }
     _visit[end_x][end_y] = @(0);//(end_x,end_y)点四个方向的点都遍历了一次之后，重新将该点置为未访问。

@@ -17,20 +17,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //self.labelHeightMap.text = @height_example;
+    // Do any additional setup after loading the view, typically from a nib.
+    [self caculateMap];
+}
+
+- (void)caculateMap {
     WaterVolume* w = [[WaterVolume alloc] init];
     //int height_example = {{5, 5, 5, 5}, {5, 1, 5, 5},{5, 5, 5, 5}};
-    NSArray* level0 = @[@(5), @(5), @(5), @(5), @(5)];
-    NSArray* level1 = [NSArray arrayWithObjects:@(5), @(1), @(5), @(3), @(5),nil];
-    NSArray* level2 = [NSArray arrayWithObjects:@(5), @(2), @(5), @(2), @(5),nil];
-    NSArray* level3 = [NSArray arrayWithObjects:@(5), @(5), @(5), @(5), @(5),nil];
-    _mapHeightArray =  [NSArray arrayWithObjects:level0, level1, level2, level3, nil];
+    NSArray* level0 = @[@(5), @(5), @(5)];
+    NSArray* level1 = @[@(5), @(1), @(5)];
+    NSArray* level2 = @[@(5), @(2), @(5)];
+    NSArray* level3 = @[@(5), @(5), @(5)];
+    _mapHeightArray =  @[level0, level1, level2, level3]; //[NSArray arrayWithObjects:level0, level1, level2, level2, nil];
     dispatch_async(dispatch_queue_create("watervolume", DISPATCH_QUEUE_CONCURRENT), ^() {
-        int volume = [w water_volume:_mapHeightArray withWidth:4 withDepth:3];
+        int volume = [w water_volume:_mapHeightArray withWidth:3 withDepth:4];
         self.labelVolume.text = [NSString stringWithFormat:@"%d", volume];
         
     });
-    //self.labelHeightMap.text = @height_example;
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)didReceiveMemoryWarning {
